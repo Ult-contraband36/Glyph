@@ -37,14 +37,17 @@ export default function Sidebar({ activeTab, onTabChange, onDisconnect }) {
         ))}
       </nav>
 
-      <div className="px-4 mt-auto">
+      <div className="px-4 mt-auto pb-4">
         <button
           onClick={onDisconnect}
-          className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors tracking-wide"
+          className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors tracking-wide mb-4"
         >
           <LogOut size={20} />
           Disconnect
         </button>
+        <div className="text-center text-xs text-gray-500 font-medium">
+          Made by <a href="https://github.com/TheLunatic1" target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:text-brand-300 transition-colors">TheLunatic1</a>
+        </div>
       </div>
     </div>
   );
