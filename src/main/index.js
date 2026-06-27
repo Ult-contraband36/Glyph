@@ -106,3 +106,36 @@ ipcMain.handle('ssh-exec', async (event, command) => {
 ipcMain.handle('ssh-sftp-readdir', async (event, path) => {
   return await sshManager.readDir(path);
 });
+
+ipcMain.handle('ssh-read-dir', async (_, { path }) => {
+  return await sshManager.readDir(path)
+})
+
+ipcMain.handle('get-zt-node-id', async () => {
+  try {
+    const zt = require('libzt');
+    const ztPath = join(app.getPath('userData'), 'zt_node');
+    
+    try {
+      await zt.node.start({ path: ztPath });
+    } catch(e) {
+      const msg = (e && e.message) ? e.message : String(e);
+      if (!msg.includes('already been started')) {
+        throw e;
+      }
+    }
+    
+    let id = zt.node.id().toString(16);
+    let attempts = 0;
+    while (id === '0' && attempts < 50) {
+      await new Promise(r => setTimeout(r, 100));
+      id = zt.node.id().toString(16);
+      attempts++;
+    }
+    
+    return id !== '0' ? id : null;
+  } catch (e) {
+    console.error('Failed to get ZT Node ID:', e);
+    return null;
+  }
+});

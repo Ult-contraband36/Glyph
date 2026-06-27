@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, Cpu, MemoryStick, HardDrive, Wifi, ArrowDown, ArrowUp } from 'lucide-react';
+import OsLogo from '../components/OsLogo';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const fmtBytes = (bytes) => {
@@ -301,7 +302,7 @@ const NetworkCard = ({ raw, onClick }) => {
 };
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
-export default function Dashboard() {
+export default function Dashboard({ server }) {
   const [stats, setStats] = useState({ cpu: 0, mem: 0, disk: 0, uptime: 'Loading...', users: '0' });
   const [rawStats, setRawStats] = useState({ top: '', free: '', df: '', net: '', cores: '', temp: '' });
   const [activeModal, setActiveModal] = useState(null);
@@ -347,9 +348,24 @@ export default function Dashboard() {
       {activeModal === 'disk' && <DiskModal raw={rawStats.df} onClose={() => setActiveModal(null)} />}
       {activeModal === 'net' && <NetModal raw={rawStats.net} onClose={() => setActiveModal(null)} />}
 
-      <header className="mb-10">
-        <h2 className="text-3xl font-bold text-gray-100">Server Dashboard</h2>
-        <p className="text-gray-400 mt-2">Live metrics — click any card for details</p>
+      <header className="mb-10 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-100">Server Dashboard</h2>
+          <p className="text-gray-400 mt-2">Live metrics — click any card for details</p>
+        </div>
+        {server && (
+          <div className="flex items-center gap-4 bg-dark-800/50 p-4 rounded-2xl border border-dark-700">
+            <div className="w-12 h-12 bg-dark-900 rounded-full flex items-center justify-center p-2 border border-brand-500/20 shadow-lg shadow-brand-500/10">
+              <OsLogo server={server} className="w-full h-full" />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-gray-100">{server.name}</div>
+              <div className="text-sm font-mono text-gray-400">
+                {server.username}@{server.host}:{server.port}
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

@@ -12,7 +12,7 @@ export default class SSHManager {
 
   async connect(config, mainWindow) {
     this.mainWindow = mainWindow;
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.client.on('ready', async () => {
         this.isConnected = true;
         this.initShell();
@@ -30,14 +30,70 @@ export default class SSHManager {
         resolve({ success: true, os });
       }).on('error', (err) => {
         reject({ success: false, error: err.message });
-      }).connect({
-        host: config.host,
-        port: config.port || 22,
-        username: config.username,
-        password: config.password,
-        privateKey: config.privateKey,
-        readyTimeout: 10000
       });
+
+      try {
+        const connectOpts = {
+          host: config.host,
+          port: config.port || 22,
+          username: config.username,
+          password: config.password,
+          privateKey: config.privateKey,
+          readyTimeout: 10000
+        };
+
+        if (config.zerotier) {
+          const zt = require('libzt');
+          const { app } = require('electron');
+          const path = require('path');
+          
+          // Store zt node data in user data folder
+          const ztPath = path.join(app.getPath('userData'), 'zt_node');
+          
+          console.log(`Starting ZeroTier node and joining network ${config.zerotier}...`);
+          if (this.mainWindow) {
+            this.mainWindow.webContents.send('ssh-status', `Joining ZeroTier ${config.zerotier}...`);
+          }
+          
+          try {
+            await zt.node.start({ path: ztPath });
+          } catch (e) {
+            const msg = (e && e.message) ? e.message : String(e);
+            if (!msg.includes('already been started')) {
+              throw e;
+            }
+          }
+
+          let ip = null;
+          try {
+            ip = await zt.node.getIPv4Address(config.zerotier);
+          } catch (e) {}
+
+          if (!ip) {
+            await zt.node.joinNetwork(config.zerotier);
+            for (let i = 0; i < 30; i++) {
+              try {
+                ip = await zt.node.getIPv4Address(config.zerotier);
+                break;
+              } catch (e) {
+                await new Promise(r => setTimeout(r, 1000));
+              }
+            }
+            if (!ip) throw new Error("Timed out waiting for ZeroTier IP (did you authorize the node?)");
+          }
+          
+          console.log(`Creating ZeroTier socket to ${config.host}:${config.port}`);
+          connectOpts.sock = zt.net.createConnection(connectOpts.port, connectOpts.host);
+          
+          // ssh2 requires host/port undefined if sock is provided
+          delete connectOpts.host;
+          delete connectOpts.port;
+        }
+
+        this.client.connect(connectOpts);
+      } catch (err) {
+        reject({ success: false, error: err.message });
+      }
     });
   }
 

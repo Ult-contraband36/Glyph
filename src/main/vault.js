@@ -35,7 +35,8 @@ export default class Vault {
       host: server.host,
       username: server.username,
       port: server.port || 22,
-      os: server.os || null
+      os: server.os || null,
+      zerotier: server.zerotier || ''
       // Do not send passwords to the frontend
     }));
   }
@@ -47,6 +48,7 @@ export default class Vault {
       host: serverConfig.host,
       username: serverConfig.username,
       port: serverConfig.port || 22,
+      zerotier: serverConfig.zerotier || ''
     };
 
     if (serverConfig.password) {
@@ -84,7 +86,8 @@ export default class Vault {
     const config = {
       host: server.host,
       username: server.username,
-      port: server.port
+      port: server.port,
+      zerotier: server.zerotier || ''
     };
 
     if (server.password && safeStorage.isEncryptionAvailable()) {
